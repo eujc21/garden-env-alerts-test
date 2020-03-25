@@ -12,6 +12,8 @@ json = "*"
 csv = "*"
 request = "*"
 celery = "*"
+flower = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.7"
