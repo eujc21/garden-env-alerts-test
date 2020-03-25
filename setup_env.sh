@@ -6,8 +6,19 @@ if ! type "redis-cli" > /dev/null; then
     exit 1    
 else         
     sudo systemctl restart redis.service    
-fi 
+fi
 
+
+if ! type "pipenv" > /dev/null; then    
+    echo "Please install pipenv"                     
+    exit 1    
+else         
+		pip install pipenv
+fi
+
+pipenv --rm
+pipenv --three
+pipenv install --skip-lock 
 export FLASK_APP=main.py
 pipenv run flask run --host=0.0.0.0
 

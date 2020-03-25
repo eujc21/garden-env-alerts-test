@@ -38,6 +38,7 @@ client.conf.update(
 r = redis.Redis(host="localhost", port=6379, db=0)
 
 # [X] Get file going to parse through.
+# Ignore for now, wanted to just have a registry function
 parameter_list = [    
         {    
             "key": "air_temperature",    
@@ -76,7 +77,8 @@ parameter_list = [
 #        print(parameter["key"] == "air_temperature") 
 
 @client.task(name="exceed_air_temp")
-def exceeds_air_temp():
+def exceeds_air_temp(obj):
+    print(obj)
     return False
 
 @client.task(name="exceeds_humidity")
@@ -100,14 +102,49 @@ def exceeds_ph():
     return False
 
 @client.task(name="out_of_range_logic")
-def out_of_range_logic(obj):
+def out_of_range_logic(list_oncoming):
+    obj = list_oncoming
     # Format time stamp from unix to MM/DD HH:MM
     newobj = {}
-    newobj["timestamp"] = datetime
-        .utcfromtimestamp(int(obj[1]))
-        .strftime('%m/%d %H:%M')
+    newobj["timestamp"] = datetime.utcfromtimestamp(int(obj[1])).strftime('%m/%d %H:%M')
+   
+    # x = a if b else 0 <- Prettier
+    # Conditional statements will create new tasks associated with above
+    if obj[1] > 83 or obj[1] < 65:
+        newobj["air_temperature"] = False
+        exceeds_air_temp.apply_async(
+                args=[newobj],
+                countdown=30
+        )
+    else:
+        newobj["air_temperature"] = True
     
-    return newobj
+    if obj[2] > 90 or obj[2] < 45:
+        newobj["humidity"] = False
+    else:
+        newobj["humidity"] = True
+    
+    if obj[3] > 1300 or obj[3] < 800:
+        newobj["co2"] = False
+    else:
+        newobj["co2"] = True
+    
+    if obj[4] > 2500 or obj[4] < 100:
+        newobj["ec"] = False
+    else:
+        newobj["ec"] = True
+    
+    if obj[5] > 7.0 or obj[5] < 5.7:
+        newobj["ph"] = False
+    else:
+        newobj["ph"] = True
+    
+    if obj[6] > 83 or obj[6] < 63:
+        newobj["water_temp"] = False 
+    else:
+        newobj["water_temp"] = True
+    
+    
 
 @app.route('/csv', methods=['GET', 'POST'])    
 def main():
@@ -116,6 +153,7 @@ def main():
         reader = csv.reader(f)
         next(reader) # skip header
         for row in reader:
+            print(type(row))
             out_of_range_logic.apply_async(
                     args=[row],
                     countdown=30
