@@ -1,4 +1,4 @@
-time_stamp,air_temperature,humidity,co2,ec,pH,water_temperature
+timestamp,air_temperature,humidity,co2,ec,pH,water_temperature
 1573596005,81.6,70.7,1080,1998,6.09,73.1
 1573596065,81.7,70.6,1089,1998,6.09,73.1
 1573596125,81.9,70.1,1100,1997,6.08,73.1
