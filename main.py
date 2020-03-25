@@ -1,3 +1,7 @@
+# Celery/Redis Queue -> takes care of tasks incoming from different sensors
+# Would like to write tasks that retirev db info against sensor to send out
+# custom alert to owner or farmer
+#
 # https://github.com/Miserlou/Zappa/issues/1426
 #__name__ = '.'.join(__name__.split('/'))
 #__package__ = '.'.join('.'.join(__name__.split('/')).split('.')[:-1])
